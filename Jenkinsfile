@@ -1,39 +1,46 @@
-
 pipeline {
-
-    // Run on an available Jenkins agent
     agent any
 
-    // Define pipeline stages
     stages {
+        stage('Install Dependencies') {
+            steps {
+                echo 'Installing testing dependencies...'
+                bat 'node --version'
+                bat 'npm --version'
+                bat 'npm install'
+            }
+        }
+
+        stage('Unit Testing') {
+            steps {
+                echo 'Running unit tests...'
+                bat 'npm run test:unit'
+            }
+        }
+
+        stage('Integration Testing') {
+            steps {
+                echo 'Running integration tests...'
+                bat 'npm run test:integration'
+            }
+        }
 
         stage('Build') {
             steps {
-
-                echo 'Starting DevOps application build...'
-
-                // Check Docker installation
+                echo 'Building Docker image...'
                 bat 'docker --version'
-
-                // Build Docker image
                 bat 'docker build -t devops-app:1.0 .'
-
-                echo 'Docker image build completed!'
             }
         }
     }
 
-    // Actions after pipeline execution
     post {
-
         success {
-            echo 'SUCCESS: DevOps application built successfully.'
+            echo 'SUCCESS: All tests passed and Docker image built.'
         }
-
         failure {
-            echo 'FAILURE: Check the Jenkins Console Output.'
+            echo 'FAILURE: Check Jenkins Console Output.'
         }
-
         always {
             echo 'Jenkins pipeline execution finished.'
         }

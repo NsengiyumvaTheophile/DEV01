@@ -1,0 +1,14 @@
+{
+  "name": "devops",
+  "version": "1.0.0",
+  "description": "DevOps HTML testing project",
+  "private": true,
+  "scripts": {
+    "test": "jest --runInBand",
+    "test:unit": "jest --runInBand tests/unit.test.js",
+    "test:integration": "jest --runInBand tests/integration.test.js"
+  },
+  "devDependencies": {
+    "jest": "^30.0.0"
+  }
+}
