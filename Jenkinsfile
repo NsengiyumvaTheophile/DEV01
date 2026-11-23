@@ -2,10 +2,6 @@
 pipeline {
     agent any
 
-    environment {
-        PATH+DOCKER = 'C:\\Users\\user\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin'
-    }
-
     stages {
 
         stage('Install Dependencies') {
@@ -33,17 +29,25 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                echo 'Checking Docker installation...'
-                bat 'where docker'
-                bat 'docker --version'
+                echo 'Adding Docker to PATH...'
 
-                echo 'Checking Docker engine...'
-                bat 'docker info'
+                bat '''
+                    set "PATH=C:\\Users\\user\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%"
 
-                echo 'Building Docker image...'
-                bat 'docker build -t devops-app:1.0 .'
+                    echo Checking Docker installation...
+                    where docker
 
-                echo 'Docker image built successfully!'
+                    echo Checking Docker version...
+                    docker --version
+
+                    echo Checking Docker engine...
+                    docker info
+
+                    echo Building Docker image...
+                    docker build -t devops-app:1.0 .
+
+                    echo Docker image built successfully!
+                '''
             }
         }
     }
