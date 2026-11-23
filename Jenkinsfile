@@ -2,11 +2,15 @@
 pipeline {
     agent any
 
+    environment {
+        PATH+DOCKER = 'C:\\Users\\user\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin'
+    }
+
     stages {
 
         stage('Install Dependencies') {
             steps {
-                echo 'Installing testing dependencies...'
+                echo 'Installing dependencies...'
                 bat 'node --version'
                 bat 'npm.cmd --version'
                 bat 'npm.cmd install'
@@ -30,18 +34,23 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Checking Docker installation...'
+                bat 'where docker'
                 bat 'docker --version'
+
+                echo 'Checking Docker engine...'
+                bat 'docker info'
 
                 echo 'Building Docker image...'
                 bat 'docker build -t devops-app:1.0 .'
+
+                echo 'Docker image built successfully!'
             }
         }
     }
 
     post {
         success {
-            echo 'SUCCESS: Jenkins pipeline completed successfully!'
-            echo 'Docker image devops-app:1.0 was built.'
+            echo 'SUCCESS: All pipeline stages completed!'
         }
 
         failure {
