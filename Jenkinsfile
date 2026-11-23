@@ -27,9 +27,26 @@ pipeline {
             }
         }
 
+        stage('SAST Security Scan') {
+            steps {
+                echo 'Scanning source code for security vulnerabilities...'
+
+                bat '''
+                    set "PATH=C:\\Users\\user\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%"
+
+                    echo Checking Docker...
+                    docker --version
+                    docker info
+
+                    echo Running Semgrep SAST scan...
+                    docker run --rm -v "%WORKSPACE%:/src" semgrep/semgrep semgrep scan --config p/security-audit --error /src
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                echo 'Adding Docker to PATH...'
+                echo 'Building Docker image...'
 
                 bat '''
                     set "PATH=C:\\Users\\user\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;%PATH%"
@@ -50,11 +67,17 @@ pipeline {
                 '''
             }
         }
+
+        stage('Pipeline Summary') {
+            steps {
+                echo 'Unit tests, integration tests, SAST and Docker build completed successfully!'
+            }
+        }
     }
 
     post {
         success {
-            echo 'SUCCESS: All pipeline stages completed!'
+            echo 'SUCCESS: All tests, security scans and Docker build passed!'
         }
 
         failure {
